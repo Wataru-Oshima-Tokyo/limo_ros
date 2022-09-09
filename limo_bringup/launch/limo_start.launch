@@ -2,16 +2,19 @@
 <launch> 
     <!-- ttyTHS1 for NVIDIA nano serial port-->
     <!-- ttyUSB0 for IPC USB serial port -->
+    <arg name = "model_xacro" default = "$(find limo_description)/urdf/limo_four_diff.xacro" />
     <arg name="port_name" default="ttyTHS1" />
     <arg name="use_mcnamu" default="false" />
-
+    <param name="robot_description" command="$(find xacro)/xacro $(arg model_xacro)"/>
     <include file="$(find limo_base)/launch/limo_base.launch">
         <arg name="port_name" default="$(arg port_name)" />
         <arg name="use_mcnamu" default="$(arg use_mcnamu)" />
     </include>
-
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"></node>
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"></node>
     <include file="$(find ydlidar_ros)/launch/X2L.launch" />
 
-    <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser_link" args="0.105 0.0 0.08 0.0 0.0 0.0 /base_link /laser_link 10" />
-    <node pkg="tf" type="static_transform_publisher" name="base_link_to_imu_link" args="0.0 0.0 0.0 0.0 0.0 0.0 /base_link /imu_link 10" />
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_to_laser_link" args="0.105 0.0 0.08 0.0 0.0 0.0 base_link laser_link" />
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_to_imu_link" args="0.0 0.0 0.0 0.0 0.0 0.0 base_link imu_link" />
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_to_base_footprint" args="0.0 0.0 0.0 0.0 0.0 0.0 base_link base_footprint" />
 </launch>
